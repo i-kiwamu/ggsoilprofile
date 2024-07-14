@@ -16,5 +16,7 @@ Depends:
 LazyData: true
 Imports: 
     dplyr,
+    ggpattern,
     ggplot2,
+    magick,
     rlang
