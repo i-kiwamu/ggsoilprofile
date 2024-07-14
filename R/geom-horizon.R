@@ -2,8 +2,8 @@
 #' @description A \code{ggproto} object for horizon line.
 #' @importFrom dplyr group_by filter ungroup
 GeomHorizonLine <- ggplot2::ggproto(
-  "GeomHorizonLine", ggplot2::GeomSegment,
-  required_aes = c("x", "y", "yend"),
+  "GeomHorizonLine", ggplot2::Geom,
+  required_aes = c("x", "top", "bottom"),
   default_aes = ggplot2::aes(linetype = "solid", linewidth = 0.5,
                              colour = "black", alpha = NA),
   setup_data = function(data, params) {
@@ -17,27 +17,36 @@ GeomHorizonLine <- ggplot2::ggproto(
     data$just <- params$just %||% 0.5
     data_left <- transform(data,
                            x = x - width * just,
-                           xend = x - width * just)
+                           xend = x - width * just,
+                           y = top,
+                           yend = bottom)
     data_right <- transform(data,
                             x = x + width * (1 - just),
-                            xend = x + width * (1 - just))
+                            xend = x + width * (1 - just),
+                            y = top,
+                            yend = bottom)
     data_top <- data %>%
       group_by(x) %>%
-      filter(y == max(y)) %>%
+      filter(top == max(top)) %>%
       ungroup() %>%
       transform(x = x - width * just,
                 xend = x + width * (1 - just),
-                yend = y)
+                y = top,
+                yend = top)
     data_inside <- data %>%
       group_by(x) %>%
-      filter(y != max(y)) %>%
+      filter(top != max(top)) %>%
       ungroup() %>%
       transform(x = x - width * just,
                 xend = x + width * (1 - just),
-                yend = y)
+                y = top,
+                yend = top)
     ggplot2::flip_data(rbind(data_left, data_right, data_top, data_inside),
                              params$flipped_aes)
-  }
+  },
+  draw_panel = ggplot2::GeomSegment$draw_panel,
+  draw_key = ggplot2::draw_key_path,
+  rename_size = TRUE
 )
 
 
@@ -60,12 +69,12 @@ geom_horizon_line <-
 #' @description A \code{ggproto} object for horizon with munsell.
 GeomHorizonMunsell <- ggplot2::ggproto(
   "GeomHorizonMunsell", ggplot2::GeomBar,
-  required_aes = c("x", "y", "yend"),
+  required_aes = c("x", "top", "bottom"),
   default_aes = ggplot2::aes(linetype = "blank", linewidth = 0,
                              colour = NA, fill = "transparent", alpha = NA),
   setup_data = function(data, params) {
-    data <- transform(data[order(data$x, data$y, decreasing = TRUE),],
-                      y = yend - y)
+    data <- transform(data,
+                      y = bottom - top)
     data$flipped_aes <- params$flipped_aes
     data <- ggplot2::flip_data(data, params$flipped_aes)
     data$width <- data$width %||%
@@ -78,7 +87,8 @@ GeomHorizonMunsell <- ggplot2::ggproto(
                       xmin = x - width * just, xmax = x + width * (1 - just),
                       width = NULL, just = NULL)
     ggplot2::flip_data(data, params$flipped_aes)
-  }
+  },
+  rename_size = TRUE
 )
 
 
@@ -145,13 +155,13 @@ pattern_aesthetics <- ggplot2::aes(
 #' @description A \code{ggproto} object for horizon with humus.
 GeomHorizonHumus <- ggplot2::ggproto(
   "GeomHorizonHumus", ggpattern::GeomBarPattern,
-  required_aes = c("x", "y", "yend"),
+  required_aes = c("x", "top", "bottom"),
   default_aes = c(ggplot2::aes(linetype = "blank", linewidth = 0,
                                colour = NA, fill = "white", alpha = NA),
                   pattern_aesthetics),
   setup_data = function(data, params) {
-    data <- transform(data[order(data$x, data$y, decreasing = TRUE),],
-                      y = yend - y)
+    data <- transform(data[order(data$x, data$top, decreasing = TRUE),],
+                      y = bottom - top)
     data$flipped_aes <- params$flipped_aes
     data <- ggplot2::flip_data(data, params$flipped_aes)
     data$width <- data$width %||%
@@ -164,7 +174,8 @@ GeomHorizonHumus <- ggplot2::ggproto(
                       xmin = x - width * just, xmax = x + width * (1 - just),
                       width = NULL, just = NULL)
     ggplot2::flip_data(data, params$flipped_aes)
-  }
+  },
+  rename_size = TRUE
 )
 
 
