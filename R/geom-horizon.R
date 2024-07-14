@@ -1,8 +1,8 @@
-#' GeomHorizonLine
-#' @description A \code{ggproto} object for horizon line.
+#' GeomPedonLine
+#' @description A \code{ggproto} object for pedon lines.
 #' @importFrom dplyr group_by filter ungroup
-GeomHorizonLine <- ggplot2::ggproto(
-  "GeomHorizonLine", ggplot2::Geom,
+GeomPedonLine <- ggplot2::ggproto(
+  "GeomPedonLine", ggplot2::Geom,
   required_aes = c("x", "top", "bottom"),
   default_aes = ggplot2::aes(linetype = "solid", linewidth = 0.5,
                              colour = "black", alpha = NA),
@@ -50,15 +50,15 @@ GeomHorizonLine <- ggplot2::ggproto(
 )
 
 
-#' geom_horizon_line
-#' @description A \code{geom} object for horizon line.
+#' geom_pedon_line
+#' @description A \code{geom} object for pedon lines.
 #' @inheritParams ggplot2::geom_segment
-geom_horizon_line <-
+geom_pedon_line <-
   function(mapping = NULL, data = NULL, stat = "identity",
            position = "identity", na.rm = FALSE, show.legend = NA,
            inherit.aes = TRUE, ...) {
   ggplot2::layer(
-    geom = GeomHorizonLine, mapping = mapping, data = data, stat = stat,
+    geom = GeomPedonLine, mapping = mapping, data = data, stat = stat,
     position = position, show.legend = show.legend, inherit.aes = inherit.aes,
     params = list(na.rm = na.rm, ...)
   )
@@ -211,11 +211,10 @@ geom_horizon <- function(mapping = NULL, data = NULL, stat = "identity",
          ggplot2::scale_fill_manual(
            values = mnsl2hex(sort(unique(pedons$color))),
            na.value = "transparent", guide = "none"),
-         geom_horizon_line(mapping = mapping[names(mapping) != "fill"],
-                           data = data, stat = stat,
-                           position = "identity", na.rm = na.rm,
-                           show.legend = show.legend, inherit.aes = inherit.aes,
-                           ...))
+         geom_pedon_line(
+           mapping = mapping[names(mapping) != "fill"],
+           data = data, stat = stat, position = "identity", na.rm = na.rm,
+           show.legend = show.legend, inherit.aes = inherit.aes, ...))
   } else if ("pattern" %in% names(mapping)) {
     list(geom_horizon_humus(mapping = mapping, data = data, stat = stat,
                             position = ggplot2::position_stack(reverse = TRUE),
@@ -228,10 +227,9 @@ geom_horizon <- function(mapping = NULL, data = NULL, stat = "identity",
          ggpattern::scale_pattern_linetype_manual(
            values = c("little" = "blank", "common" = "dotted",
                       "rich" = "solid", "very rich" = "solid")),
-         geom_horizon_line(mapping = mapping[setdiff(names(mapping), c("pattern", "pattern_linetype"))],
-                           data = data, stat = stat,
-                           position = "identity", na.rm = na.rm,
-                           show.legend = show.legend, inherit.aes = inherit.aes,
-                           ...))
+         geom_pedon_line(
+           mapping = mapping[setdiff(names(mapping), c("pattern", "pattern_linetype"))],
+           data = data, stat = stat, position = "identity", na.rm = na.rm,
+           show.legend = show.legend, inherit.aes = inherit.aes, ...))
   }
 }
