@@ -111,7 +111,7 @@ GeomHorizon <- ggplot2::ggproto(
                                humus = NA),
                   pattern_aesthetics),
   setup_data = function(data, params) {
-    data <- transform(data[order(data$x, data$top, decreasing = TRUE),],
+    data <- transform(data,
                       y = bottom - top)
     data$flipped_aes <- params$flipped_aes
     data <- ggplot2::flip_data(data, params$flipped_aes)
