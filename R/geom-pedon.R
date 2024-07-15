@@ -64,7 +64,7 @@ pattern_aesthetics <- ggplot2::aes(
 
   pattern_angle            = 45,
   pattern_density          = 0.01,
-  pattern_spacing          = 0.015,
+  pattern_spacing          = 0.01,
   pattern_xoffset          = 0,
   pattern_yoffset          = 0,
 
@@ -108,7 +108,7 @@ GeomHorizon <- ggplot2::ggproto(
   required_aes = c("x", "top", "bottom"),
   default_aes = c(ggplot2::aes(linetype = "blank", linewidth = 0,
                                colour = NA, fill = "white", alpha = NA,
-                               humus = NA),
+                               humus = NULL, peat = NULL, sandy = NULL),
                   pattern_aesthetics),
   setup_data = function(data, params) {
     data <- transform(data,
@@ -123,7 +123,18 @@ GeomHorizon <- ggplot2::ggproto(
     data <- transform(data,
                       ymin = pmin(y, 0), ymax = pmax(y, 0),
                       xmin = x - width * just, xmax = x + width * (1 - just),
-                      width = NULL, just = NULL)
+                      width = NULL, just = NULL,
+                      pattern = dplyr::case_when(
+                        sandy != "none" ~ "sandy",
+                        is.na(humus) | peat != "none" ~ NA,
+                        .default = humus),
+                      pattern_linetype = dplyr::case_when(
+                        is.na(humus) | peat != "none" ~ NA,
+                        .default = humus),
+                      pattern_density = dplyr::case_when(
+                        sandy != "none" ~ "sandy",
+                        is.na(humus) | peat != "none" ~ NA,
+                        .default = humus))
     ggplot2::flip_data(data, params$flipped_aes)
   },
   rename_size = TRUE
@@ -152,30 +163,17 @@ geom_horizon <-
 #' @inheritParams ggplot2::geom_bar
 #' @export
 geom_pedon <- function(mapping = NULL, data = NULL, stat = "identity",
-                         na.rm = FALSE, show.legend = NA,
-                         inherit.aes = TRUE, ...) {
-  list(geom_horizon(mapping = mapping[names(mapping) != "boundary_type"],
+                       na.rm = FALSE, show.legend = NA,
+                       inherit.aes = TRUE, ...) {
+  list(geom_horizon(mapping = mapping,
                     data = data, stat = stat,
                     position = ggplot2::position_stack(reverse = TRUE),
                     ...,
                     na.rm = na.rm, show.legend = show.legend,
                     inherit.aes = inherit.aes),
-       ggplot2::scale_fill_identity(
-         na.value = "transparent", guide = "none"),
-       ggpattern::scale_pattern_manual(
-         values = c("little" = "none", "common" = "stripe",
-                    "rich" = "stripe", "very rich" = "crosshatch")),
-       ggpattern::scale_pattern_linetype_manual(
-         values = c("little" = "blank", "common" = "dotted",
-                    "rich" = "solid", "very rich" = "solid")),
        geom_pedon_line(
-         mapping = mapping[setdiff(names(mapping), c("boundary_type", "fill", "pattern", "pattern_linetype"))],
+         mapping = mapping[setdiff(names(mapping), c("fill", "humus", "peat", "sandy"))],
          data = data, stat = stat, position = "identity", na.rm = na.rm,
-         show.legend = show.legend, inherit.aes = inherit.aes, ...),
-       geom_boundary(
-         mapping = mapping[setdiff(names(mapping), c("fill", "pattern", "pattern_linetype"))],
-         data = data, stat = stat, position = "identity", na.rm = na.rm,
-         show.legend = show.legend, inherit.aes = inherit.aes, ...),
-       scale_boundary_identity()
+         show.legend = show.legend, inherit.aes = inherit.aes, ...)
        )
 }

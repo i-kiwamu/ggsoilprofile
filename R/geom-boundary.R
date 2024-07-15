@@ -24,8 +24,8 @@ GeomBoundary <- ggplot2::ggproto(
                 xend = x + width * (1 - just),
                 y = bottom,
                 yend = bottom,
-                linetype = ifelse(is.na(boundary_type), "solid", boundary_type),
-                linewidth = ifelse(is.na(boundary_type), 0.3, boundary_type))
+                linetype = boundary_type,
+                linewidth = boundary_type)
     ggplot2::flip_data(data,
                        params$flipped_aes)
   },
