@@ -160,8 +160,7 @@ geom_pedon <- function(mapping = NULL, data = NULL, stat = "identity",
                     ...,
                     na.rm = na.rm, show.legend = show.legend,
                     inherit.aes = inherit.aes),
-       ggplot2::scale_fill_manual(
-         values = mnsl2hex(sort(unique(pedons$color))),
+       ggplot2::scale_fill_identity(
          na.value = "transparent", guide = "none"),
        ggpattern::scale_pattern_manual(
          values = c("little" = "none", "common" = "stripe",
@@ -177,12 +176,6 @@ geom_pedon <- function(mapping = NULL, data = NULL, stat = "identity",
          mapping = mapping[setdiff(names(mapping), c("fill", "pattern", "pattern_linetype"))],
          data = data, stat = stat, position = "identity", na.rm = na.rm,
          show.legend = show.legend, inherit.aes = inherit.aes, ...),
-       ggplot2::scale_linetype_manual(
-         values = c("very abrupt" = "solid", "abrupt" = "solid", "clear" = "dotdash",
-                    "gradual" = "dotted"),
-         na.value = "solid"),
-       ggplot2::scale_linewidth_manual(
-         values = c("very abrupt" = 1, "abrupt" = 0.3, "clear" = 0.3,
-                    "gradual" = 0.3),
-         na.value = 0.3))
+       scale_boundary_identity()
+       )
 }

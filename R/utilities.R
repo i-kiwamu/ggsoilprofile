@@ -4,7 +4,7 @@
 #' @return character of RGB hex (ex #6D5D4A, #474747)
 #' @export
 mnsl2hex <- function(mnsl) {
-  mnsl <- ifelse(is.na(mnsl), "N 0/0", mnsl)
+  mnsl <- ifelse(is.na(mnsl), "N 10", mnsl)
   df_rgb <- munsellinterpol::MunsellToRGB(mnsl)$RGB
   hex <- rgb(df_rgb[,"R"], df_rgb[,"G"], df_rgb[,"B"], maxColorValue = 255)
   return(hex)
