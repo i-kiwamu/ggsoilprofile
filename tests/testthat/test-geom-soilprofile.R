@@ -11,7 +11,7 @@ test_that("multiplication works", {
     coord_trans(y = "reverse")
 
   fig2 <- ggplot(pedons, aes_horizon(pedon, top, bottom)) +
-    geom_pedon(aes(humus = humus)) +
+    geom_pedon(aes(humus = humus, peat = peat, sandy = sandy)) +
     geom_boundary(aes(boundary_type = boundary)) +
     scale_humus_sandy_identity() +
     scale_boundary_identity() +
