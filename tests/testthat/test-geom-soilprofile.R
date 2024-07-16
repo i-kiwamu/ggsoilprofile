@@ -4,6 +4,7 @@ test_that("multiplication works", {
   fig1 <- ggplot(pedons, aes_horizon(pedon, top, bottom)) +
     geom_pedon(aes(fill = mnsl2hex(color))) +
     geom_boundary(aes(boundary_type = boundary)) +
+    geom_gravel(aes(graveltype = gravel_shape, gravelabund = gravel_abundance)) +
     scale_fill_identity(guide = "none") +
     scale_boundary_identity() +
     scale_x_discrete(position = "top") +
@@ -13,6 +14,7 @@ test_that("multiplication works", {
   fig2 <- ggplot(pedons, aes_horizon(pedon, top, bottom)) +
     geom_pedon(aes(humus = humus, peat = peat, sandy = sandy)) +
     geom_boundary(aes(boundary_type = boundary)) +
+    geom_gravel(aes(graveltype = gravel_shape, gravelabund = gravel_abundance)) +
     scale_humus_sandy_identity() +
     scale_boundary_identity() +
     scale_x_discrete(position = "top") +
