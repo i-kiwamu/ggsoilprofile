@@ -19,6 +19,7 @@ Imports:
     dplyr,
     ggpattern,
     ggplot2,
+    grid,
     magick,
     rlang,
     tidyr
